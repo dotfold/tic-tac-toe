@@ -133,6 +133,10 @@ class ViewController: UIViewController {
         // handle reset merges by flatMap
     }
     
+    func handleEndState (with cell: Cell) {
+        
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
