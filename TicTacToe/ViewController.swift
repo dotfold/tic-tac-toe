@@ -89,6 +89,9 @@ class ViewController: UIViewController {
             .startWith(defaultGameState)
         
         let winner$ = gameState$
+            .flatMap { Observable.of(findWinner(board: $0.board)) }
+            .filter { $0.type != PlayerType.none }
+            .debug("found a winner!")
         
         // this could also be the onComplete of the render? because at that point, all tap observables have completed
         let tie$ = gameState$
