@@ -109,8 +109,7 @@ class ViewController: UIViewController {
         
         // perform a render of the entire new game state
         // explicitly discard any return values by using `_`
-        _ = gameStates$
-//            .takeUntil(gameEnd$)
+        _ = gameState$
             .flatMap({ state -> Observable<Cell> in
                 return Observable.from(state.board.reduce([], +))
             })
