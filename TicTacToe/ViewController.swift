@@ -95,6 +95,8 @@ class ViewController: UIViewController {
         
         // this could also be the onComplete of the render? because at that point, all tap observables have completed
         let tie$ = gameState$
+            .flatMap { Observable.of(checkTiedBoard(board: $0.board)) }
+
         
         
 //        gameState$ map activePlayer to label field above the board
