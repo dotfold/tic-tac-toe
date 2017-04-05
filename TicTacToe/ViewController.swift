@@ -87,8 +87,6 @@ class ViewController: UIViewController {
                 return GameState(activePlayer: nextPlayer, board: updatedPositions, complete: completed)
             })
             .startWith(defaultGameState)
-    
-        
         
         let winner$ = gameState$
         
