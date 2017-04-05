@@ -12,7 +12,6 @@ import RxCocoa
 
 class ViewController: UIViewController {
 
-    
     @IBOutlet weak var pieceTL: UIButton!
     @IBOutlet weak var pieceTC: UIButton!
     @IBOutlet weak var pieceTR: UIButton!
@@ -59,7 +58,6 @@ class ViewController: UIViewController {
         let clicks$: Array<Observable<(uiElement: UIButton, position: Position)>> = cells.reduce([], { result, cell in
             return result +
                 [cell.uiElement.rx.tap
-                    .debug("button tap")
                     .map {
                         return (uiElement: cell.uiElement, position: cell.position)
                     }
