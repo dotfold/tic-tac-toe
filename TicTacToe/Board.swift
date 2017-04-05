@@ -10,6 +10,9 @@ import UIKit
 import Foundation
 
 class Board: NSObject {
+    
+    static let BOARD_CELL_COUNT = 9
+    
     var currentPlayer: Player
     
     override init() {
