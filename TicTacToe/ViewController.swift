@@ -65,7 +65,7 @@ class ViewController: UIViewController {
         })
         
         // game state
-        let gameStates$ = Observable.merge(clicks$)
+        let gameState$ = Observable.merge(clicks$)
             .scan(defaultGameState, accumulator: { (prevState: GameState, move: (uiElement: UIButton, position: Position)) -> GameState in
                 let justMovedPlayer = prevState.activePlayer
                 let nextPlayer = prevState.activePlayer.type == PlayerType.x ? Player(type: PlayerType.o) : Player(type: PlayerType.x)
@@ -90,7 +90,10 @@ class ViewController: UIViewController {
     
         
         
+        let winner$ = gameState$
         
+        // this could also be the onComplete of the render? because at that point, all tap observables have completed
+        let tie$ = gameState$
         
         
 //        gameState$ map activePlayer to label field above the board
