@@ -129,10 +129,18 @@ class ViewController: UIViewController {
             .do(onNext: { (cell) in
                 cell.uiElement.setImage(UIImage(named: cell.owner!.imageFile), for: UIControlState())
             })
-            .subscribe(onNext: { state in
-//                print("render done")
-            })
+            .subscribe(
+                onNext: { cell in
+                    print("render done")
+                }
+            )
         
+        let r = Observable.combineLatest(winner$, tie$)
+            .subscribe(
+                onNext: { x in
+                    print("game over!")
+            }
+        )
         
         // handle reset merges by flatMap
     }
