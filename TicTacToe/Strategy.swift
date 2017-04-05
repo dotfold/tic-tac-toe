@@ -66,3 +66,14 @@ private func getDiagonals (board rows: [[Cell]]) -> [[Cell]] {
         [rows[0][2], rows[1][1], rows[2][0]]
     ]
 }
+
+// if there is no winner and all cells are marked with a valid player
+// then the game is tied
+func checkTiedBoard (board rows: [[Cell]]) -> Bool {
+    return rows.reduce([], +)
+        .filter { $0.owner?.type != PlayerType.none }
+        .count == Board.BOARD_CELL_COUNT
+}
+
+
+
