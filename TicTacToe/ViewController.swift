@@ -107,25 +107,6 @@ class ViewController: UIViewController {
         
         
         
-        
-        
-        let winner$ = gameStates$
-            .map({ state in
-                // rows
-                // columns
-                // diagonals
-                
-            })
-        
-        // this could also be the onComplete of the render? because at that point, all tap observables have completed
-        let tie$ = gameStates$
-            .map({ state in
-                // every piece has been played
-            })
-        
-        
-        let gameEnd$ = Observable.combineLatest(winner$, tie$)
-        
         // perform a render of the entire new game state
         // explicitly discard any return values by using `_`
         _ = gameStates$
