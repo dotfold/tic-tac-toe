@@ -83,8 +83,8 @@ class ViewController: UIViewController {
                     return row
                 })
                 
-                print("ret \(nextPlayer)")
-                return GameState(activePlayer: nextPlayer, board: updatedPositions)
+                let completed = findWinner(board: updatedPositions).type != PlayerType.none
+                return GameState(activePlayer: nextPlayer, board: updatedPositions, complete: completed)
             })
             .startWith(defaultGameState)
     
