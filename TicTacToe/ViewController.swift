@@ -67,6 +67,10 @@ class ViewController: UIViewController {
         // game state
         let gameState$ = Observable.merge(clicks$)
             .scan(defaultGameState, accumulator: { (prevState: GameState, move: (uiElement: UIButton, position: Position)) -> GameState in
+                
+                // don't mark any new positions if the game has completed
+                if (prevState.complete) { return prevState }
+                
                 let justMovedPlayer = prevState.activePlayer
                 let nextPlayer = prevState.activePlayer.type == PlayerType.x ? Player(type: PlayerType.o) : Player(type: PlayerType.x)
                 let markedPosition = move.position
