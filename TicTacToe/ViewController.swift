@@ -67,6 +67,8 @@ class ViewController: UIViewController {
         self.player1ActiveIndicator.alpha = 1
         self.player2ActiveIndicator.alpha = 0
         
+        
+        // handle reset merges by flatMap
         let reset$ = reset.rx.tap
             .debug("reset tap")
             .startWith()
@@ -173,16 +175,10 @@ class ViewController: UIViewController {
             .bindTo(self.tiedGameScorecard.rx.text)
             .addDisposableTo(self.disposeBag)
         
-        // MARK:
+        // MARK: Game end display
         let gameEnd$ = Observable.merge(winner$, tie$)
             .filter{ $0.type != PlayerType.none }
             .take(1)
-        
-//            .subscribe(
-//                onNext: { x in
-//                    print("game over! \(x)")
-//            }
-//        )
         
         // Start a new game countdown timer
         // skip 1 second, then take 3
@@ -221,15 +217,7 @@ class ViewController: UIViewController {
             .do(onNext: { (cell) in
                 cell.uiElement.setImage(UIImage(named: cell.owner!.imageFile), for: UIControlState())
             })
-            .subscribe(
-                onNext: { cell in
-//                    print("render done")
-                }
-            )
-        
-        
-        
-        // handle reset merges by flatMap
+            .subscribe()
     }
     
     func handleEndState (with cell: Cell) {
