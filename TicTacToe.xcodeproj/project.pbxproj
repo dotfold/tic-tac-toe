@@ -22,6 +22,7 @@
 		79938F9B1E922923001C8F54 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79938F991E922923001C8F54 /* RxCocoa.framework */; };
 		79938F9C1E922923001C8F54 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79938F9A1E922923001C8F54 /* RxSwift.framework */; };
 		79F4FF5C1E97518300707EF2 /* light-blue-circle-md.png in Resources */ = {isa = PBXBuildFile; fileRef = 79F4FF5B1E97518300707EF2 /* light-blue-circle-md.png */; };
+		79F4FF5E1E97593A00707EF2 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F4FF5D1E97593A00707EF2 /* Game.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,7 @@
 		79938F991E922923001C8F54 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		79938F9A1E922923001C8F54 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		79F4FF5B1E97518300707EF2 /* light-blue-circle-md.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "light-blue-circle-md.png"; sourceTree = "<group>"; };
+		79F4FF5D1E97593A00707EF2 /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 				79938F901E9202F0001C8F54 /* Strategy.swift */,
 				79938F921E920602001C8F54 /* Board.swift */,
 				79938F941E920666001C8F54 /* Player.swift */,
+				79F4FF5D1E97593A00707EF2 /* Game.swift */,
 			);
 			path = TicTacToe;
 			sourceTree = "<group>";
@@ -260,6 +263,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				79938F6D1E91E1C8001C8F54 /* ViewController.swift in Sources */,
+				79F4FF5E1E97593A00707EF2 /* Game.swift in Sources */,
 				79938F6B1E91E1C8001C8F54 /* AppDelegate.swift in Sources */,
 				79938F931E920602001C8F54 /* Board.swift in Sources */,
 				79938F951E920666001C8F54 /* Player.swift in Sources */,
