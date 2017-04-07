@@ -138,8 +138,7 @@ class ViewController: UIViewController {
         // MARK: Winner
         let winner$ = gameState$
             .flatMap { Observable.of(findWinner(board: $0.board)) }
-            .filter { $0.type != PlayerType.none }
-            .debug("found a winner!")
+            .filter { $0.type != PlayerType.none && $0.type != PlayerType.tied }
             .share()
         
         // MARK: Tied board
