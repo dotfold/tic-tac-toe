@@ -29,3 +29,27 @@ struct GameState {
         self.complete = complete
     }
 }
+
+struct Scoreboard {
+    
+    var xWinCount = 0
+    var oWinCount = 0
+    var tiedGameCount = 0
+    
+    mutating func update (with player: Player) {
+        
+        switch player.type {
+            case PlayerType.tied:
+                tiedGameCount += 1
+                break
+            case PlayerType.x:
+                xWinCount += 1
+                break
+            case PlayerType.o:
+                oWinCount += 1
+                break
+            default:
+                print("no update to be made")
+        }
+    }
+}
