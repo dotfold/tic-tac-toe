@@ -11,6 +11,7 @@ import Foundation
 enum PlayerType: Int {
     case x
     case o
+    case tied
     case none
 }
 
