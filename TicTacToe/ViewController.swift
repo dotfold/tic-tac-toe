@@ -33,6 +33,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var player2Scorecard: UILabel!
     
     @IBOutlet weak var gameEndMessage: UILabel!
+    @IBOutlet weak var newGameButton: UIButton!
+    
     
     private let disposeBag = DisposeBag()
     private var cells: Array<Cell> = []
@@ -82,6 +84,11 @@ class ViewController: UIViewController {
             .map { _ in defaultGameState }
             .startWith(defaultGameState)
         
+        let newGame$ = newGameButton.rx.tap
+            .debug("new game tap")
+            .map { _ in defaultGameState }
+            .startWith(defaultGameState)
+        
         // MARK: Cell clickstreams
         let clicks$: Array<Observable<(uiElement: UIButton, position: Position)>> = self.cells.reduce([], { result, cell in
             // Map each cell to a Tuple
@@ -96,12 +103,10 @@ class ViewController: UIViewController {
         // MARK: Game State
         // game state - this is the state for each single game
         // TODO: merge gameEnded$ as another reset case
-        let gameState$ = reset$
+        let gameState$ = Observable.merge(reset$, newGame$)
             .flatMapLatest({ _ in
                 return Observable.merge(clicks$)
                     .scan(defaultGameState, accumulator: { (prevState: GameState, move: (uiElement: UIButton, position: Position)) -> GameState in
-                        
-                        let m = prevState.board[move.position.x][move.position.y].owner
                         
                         // if the cell is already filled, don't build a new gamestate
                         if prevState.board[move.position.y][move.position.x].owner != nil { return prevState }
@@ -204,38 +209,17 @@ class ViewController: UIViewController {
         let gameEnd$ = Observable.merge(winner$, tie$)
             .filter{ $0.type != PlayerType.none }
             .take(1)
-        
-        // Start a new game countdown timer
-        // skip 1 second, then take 3
-        // but only when the game has ended, so use a concat.
-        // this is mapped to an Int with value 0 because the resulting sequence from concat
-        // must have two sequences that yeild the same type.
-        let gameEndedCountdown$ = gameEnd$.map { _ in 0 }.concat(
-            Observable<Int>.interval(1, scheduler: MainScheduler.instance)
-                .map({ time in 3 - time })
-                .take(3 + 1)
-            )
-            // and skip that first 0
-            .skip(1)
-        
-        let newGameMessageProducer$ = Observable.combineLatest(gameEnd$, gameEndedCountdown$)
-            .map { (winner, remaining) -> String in
+            .map { (winner) -> String in
                 let message = winner.type == PlayerType.tied
-                    ? "Game tied... starting new game in \(remaining)"
-                    : "\(winner.description) wins! Starting new game in \(remaining)"
+                    ? "Game tied!"
+                    : "\(winner.description) wins!"
                 
                 return message
             }
+            // bind the countdown message to the UI
+            .bindTo(self.gameEndMessage.rx.text).addDisposableTo(self.disposeBag)
         
-        // bind the countdown message to the UI
-        _ = newGameMessageProducer$.bindTo(self.gameEndMessage.rx.text)
-        
-        // when the countdown has completed - i.e. produced the final value
-        // this indicates that we can now reset the game
-        let startNewGame$ = newGameMessageProducer$.takeLast(1)
-            .ignoreElements()
-            .map { _ in defaultGameState }
-            .startWith(nil)
+//        gameEnd$.
         
         // MARK: Render
         // perform a render of the entire new game state
