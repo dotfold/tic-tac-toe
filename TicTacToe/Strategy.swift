@@ -31,7 +31,7 @@ func findWinner (board rows: [[Cell]]) -> Player {
             return Player(type: PlayerType.none)
         })
     
-    print("any same? \(maybeWinner)")
+//    print("any same? \(maybeWinner)")
     return maybeWinner!
 }
 
@@ -69,10 +69,12 @@ private func getDiagonals (board rows: [[Cell]]) -> [[Cell]] {
 
 // if there is no winner and all cells are marked with a valid player
 // then the game is tied
-func checkTiedBoard (board rows: [[Cell]]) -> Bool {
-    return rows.reduce([], +)
-        .filter { $0.owner?.type != PlayerType.none }
-        .count == Board.BOARD_CELL_COUNT
+func checkTiedBoard (board rows: [[Cell]]) -> Player {
+    let tie = rows.reduce([], +)
+        .filter { $0.owner != nil }
+        .count == BOARD_CELL_COUNT
+    
+    return tie ? Player(type: PlayerType.tied) : Player(type: PlayerType.none)
 }
 
 
