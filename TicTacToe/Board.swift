@@ -9,6 +9,8 @@
 import UIKit
 import Foundation
 
+let BOARD_CELL_COUNT = 9
+
 struct Position {
     var x: Int
     var y: Int
