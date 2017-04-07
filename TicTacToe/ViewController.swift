@@ -79,7 +79,8 @@ class ViewController: UIViewController {
         // MARK: New Game
         let reset$ = reset.rx.tap
             .debug("reset tap")
-            .startWith()
+            .map { _ in defaultGameState }
+            .startWith(defaultGameState)
         
         // MARK: Cell clickstreams
         let clicks$: Array<Observable<(uiElement: UIButton, position: Position)>> = self.cells.reduce([], { result, cell in
