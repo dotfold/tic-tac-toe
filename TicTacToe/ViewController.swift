@@ -12,6 +12,7 @@ import RxCocoa
 
 class ViewController: UIViewController {
 
+    // MARK: IBOutlets
     @IBOutlet weak var pieceTL: UIButton!
     @IBOutlet weak var pieceTC: UIButton!
     @IBOutlet weak var pieceTR: UIButton!
@@ -69,6 +70,7 @@ class ViewController: UIViewController {
         
         
         // handle reset merges by flatMap
+        // MARK: New Game
         let reset$ = reset.rx.tap
             .debug("reset tap")
             .startWith()
