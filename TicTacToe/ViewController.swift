@@ -145,9 +145,11 @@ class ViewController: UIViewController {
         // MARK: Tied board
         // a winning move could be played on the last cell, so if there is a winner before this produces a value, we stop there
         let tie$ = gameState$
+            .takeUntil(winner$)
             .flatMap { Observable.of(checkTiedBoard(board: $0.board)) }
+            .filter { $0.type == PlayerType.tied }
             .share()
-
+        
         
         // MARK: Player Activity Indicators
         // create two cold observables off of gameState$ that map to the side-effecting code
