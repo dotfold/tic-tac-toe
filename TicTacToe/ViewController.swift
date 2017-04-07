@@ -95,33 +95,37 @@ class ViewController: UIViewController {
         
         // MARK: Game State
         // game state - this is the state for each single game
-        let gameState$ = Observable.merge(clicks$)
-            .scan(defaultGameState, accumulator: { (prevState: GameState, move: (uiElement: UIButton, position: Position)) -> GameState in
-                
-                // don't mark any new positions if the game has completed
-                if (prevState.complete) { return prevState }
-                
-                let justMovedPlayer = prevState.activePlayer
-                let nextPlayer = prevState.activePlayer.type == PlayerType.x ? Player(type: PlayerType.o) : Player(type: PlayerType.x)
-                let markedPosition = move.position
-                
-                // loop the rows to mark the newly clicked cell with the appropriate player
-                let updatedPositions = prevState.board.enumerated().map({ (index, row) -> [Cell] in
-                    if index == markedPosition.y {
-                        let inner = row.enumerated().map({ (indexInRow, cell) -> Cell in
-                            if indexInRow == markedPosition.x {
-                                return Cell(owner: justMovedPlayer, uiElement: move.uiElement, position: move.position)
+        // TODO: merge gameEnded$ as another reset case
+        let gameState$ = reset$
+            .flatMapLatest({ _ in
+                return Observable.merge(clicks$)
+                    .scan(defaultGameState, accumulator: { (prevState: GameState, move: (uiElement: UIButton, position: Position)) -> GameState in
+                        
+                        let m = prevState.board[move.position.x][move.position.y].owner
+                        
+                        // if the cell is already filled, don't build a new gamestate
+                        if prevState.board[move.position.y][move.position.x].owner != nil { return prevState }
+                        
+                        // don't mark any new positions if the game has completed
+                        if prevState.complete { return prevState }
+                        
+                        let justMovedPlayer = prevState.activePlayer
+                        let nextPlayer = prevState.activePlayer.type == PlayerType.x ? Player(type: PlayerType.o) : Player(type: PlayerType.x)
+                        let markedPosition = move.position
+                        
+                        // loop the rows to mark the newly clicked cell with the appropriate player
+                        let updatedPositions = prevState.board.enumerated().map({ (index, row) -> [Cell] in
+                            if index == markedPosition.y {
+                                let inner = row.enumerated().map({ (indexInRow, cell) -> Cell in
+                                    if indexInRow == markedPosition.x {
+                                        return Cell(owner: justMovedPlayer, uiElement: move.uiElement, position: move.position)
+                                    }
+                                    return cell
+                                })
+                                return inner
                             }
-                            return cell
+                            return row
                         })
-                        return inner
-                    }
-                    return row
-                })
-                
-                // finally, check to see if this move resulted in a game end state
-                let completed = findWinner(board: updatedPositions).type != PlayerType.none // || checkTiedBoard(board: updatedPositions)
-                return GameState(activePlayer: nextPlayer, board: updatedPositions, complete: completed)
                         
                         // finally, check to see if this move resulted in a game end state
                         let maybeWinner = findWinner(board: updatedPositions).type != PlayerType.none
@@ -132,8 +136,6 @@ class ViewController: UIViewController {
                     .startWith(defaultGameState)
                     .share()
             })
-            .startWith(defaultGameState)
-            .share()
         
         // MARK: Winner
         let winner$ = gameState$
