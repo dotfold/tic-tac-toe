@@ -82,7 +82,7 @@ class ViewController: UIViewController {
             .startWith()
         
         // MARK: Cell clickstreams
-        let clicks$: Array<Observable<(uiElement: UIButton, position: Position)>> = cells.reduce([], { result, cell in
+        let clicks$: Array<Observable<(uiElement: UIButton, position: Position)>> = self.cells.reduce([], { result, cell in
             // Map each cell to a Tuple
             // For each cell, only take one tap event, these will be reset for each new game
             return result +
