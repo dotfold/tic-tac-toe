@@ -222,15 +222,36 @@ class ViewController: UIViewController {
         // MARK: Render
         // perform a render of the entire new game state
         // explicitly discard any return values by using `_`
-        _ = gameState$
+        let render$ = gameState$
             .flatMap({ state -> Observable<Cell> in
                 return Observable.from(state.board.reduce([], +))
             })
+        
+        let renderMarkedCells$ = render$
             .filter { $0.owner != nil }
             .do(onNext: { (cell) in
                 cell.uiElement.setImage(UIImage(named: cell.owner!.imageFile), for: UIControlState())
             })
-            .subscribe()
+
+        let renderUnmarkedCells$ = render$
+            .filter { $0.owner == nil }
+            .do(onNext: { (cell) in
+//                print("f \(cell)")
+                cell.uiElement.setImage(nil, for: UIControlState())
+            })
+        
+        // This is what starts everything, just one call to subscribe()
+        // all the cold observables now become 'hot' and the compositions will take place as expected
+        _ = Observable.combineLatest(renderMarkedCells$, renderUnmarkedCells$).subscribe()
+
+    }
+    
+    
+    
+    
+    // reset the board and cell clickstreams, but not the scoreboard
+    func newGameInCurrentSet () {
+        
     }
     
     func handleEndState (with cell: Cell) {
