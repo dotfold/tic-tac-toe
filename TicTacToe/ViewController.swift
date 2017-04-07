@@ -77,6 +77,8 @@ class ViewController: UIViewController {
         
         // MARK: Cell clickstreams
         let clicks$: Array<Observable<(uiElement: UIButton, position: Position)>> = cells.reduce([], { result, cell in
+            // Map each cell to a Tuple
+            // For each cell, only take one tap event, these will be reset for each new game
             return result +
                 [cell.uiElement.rx.tap
                     .map {
@@ -86,7 +88,7 @@ class ViewController: UIViewController {
         })
         
         // MARK: Game State
-        // game state
+        // game state - this is the state for each single game
         let gameState$ = Observable.merge(clicks$)
             .scan(defaultGameState, accumulator: { (prevState: GameState, move: (uiElement: UIButton, position: Position)) -> GameState in
                 
@@ -96,6 +98,8 @@ class ViewController: UIViewController {
                 let justMovedPlayer = prevState.activePlayer
                 let nextPlayer = prevState.activePlayer.type == PlayerType.x ? Player(type: PlayerType.o) : Player(type: PlayerType.x)
                 let markedPosition = move.position
+                
+                // loop the rows to mark the newly clicked cell with the appropriate player
                 let updatedPositions = prevState.board.enumerated().map({ (index, row) -> [Cell] in
                     if index == markedPosition.y {
                         let inner = row.enumerated().map({ (indexInRow, cell) -> Cell in
@@ -109,6 +113,7 @@ class ViewController: UIViewController {
                     return row
                 })
                 
+                // finally, check to see if this move resulted in a game end state
                 let completed = findWinner(board: updatedPositions).type != PlayerType.none // || checkTiedBoard(board: updatedPositions)
                 return GameState(activePlayer: nextPlayer, board: updatedPositions, complete: completed)
             })
