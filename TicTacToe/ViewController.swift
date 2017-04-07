@@ -122,6 +122,15 @@ class ViewController: UIViewController {
                 // finally, check to see if this move resulted in a game end state
                 let completed = findWinner(board: updatedPositions).type != PlayerType.none // || checkTiedBoard(board: updatedPositions)
                 return GameState(activePlayer: nextPlayer, board: updatedPositions, complete: completed)
+                        
+                        // finally, check to see if this move resulted in a game end state
+                        let maybeWinner = findWinner(board: updatedPositions).type != PlayerType.none
+                        let maybeTie = !maybeWinner && checkTiedBoard(board: updatedPositions).type == PlayerType.tied
+                        let completed = maybeWinner || maybeTie
+                        return GameState(activePlayer: nextPlayer, board: updatedPositions, complete: completed)
+                    })
+                    .startWith(defaultGameState)
+                    .share()
             })
             .startWith(defaultGameState)
             .share()
