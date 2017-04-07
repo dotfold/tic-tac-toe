@@ -254,7 +254,6 @@ class ViewController: UIViewController {
         let renderUnmarkedCells$ = render$
             .filter { $0.owner == nil }
             .do(onNext: { (cell) in
-//                print("f \(cell)")
                 cell.uiElement.setImage(nil, for: UIControlState())
             })
         
@@ -262,18 +261,6 @@ class ViewController: UIViewController {
         // all the cold observables now become 'hot' and the compositions will take place as expected
         _ = Observable.combineLatest(renderMarkedCells$, renderUnmarkedCells$).subscribe()
 
-    }
-    
-    
-    
-    
-    // reset the board and cell clickstreams, but not the scoreboard
-    func newGameInCurrentSet () {
-        
-    }
-    
-    func handleEndState (with cell: Cell) {
-        
     }
     
     override func didReceiveMemoryWarning() {
