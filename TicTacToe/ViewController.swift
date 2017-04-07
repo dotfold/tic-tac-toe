@@ -211,13 +211,11 @@ class ViewController: UIViewController {
             Observable<Int>.interval(1, scheduler: MainScheduler.instance)
                 .map({ time in 3 - time })
                 .take(3 + 1)
-//                .skip(1)
-//                .take(3)
             )
             // and skip that first 0
             .skip(1)
         
-        _ = Observable.combineLatest(gameEnd$, gameEndedCountdown$)
+        let newGameMessageProducer$ = Observable.combineLatest(gameEnd$, gameEndedCountdown$)
             .map { (winner, remaining) -> String in
                 let message = winner.type == PlayerType.tied
                     ? "Game tied... starting new game in \(remaining)"
@@ -227,6 +225,15 @@ class ViewController: UIViewController {
             }
             .bindTo(self.gameEndMessage.rx.text)
         
+        // bind the countdown message to the UI
+        _ = newGameMessageProducer$.bindTo(self.gameEndMessage.rx.text)
+        
+        // when the countdown has completed - i.e. produced the final value
+        // this indicates that we can now reset the game
+        let startNewGame$ = newGameMessageProducer$.takeLast(1)
+            .ignoreElements()
+            .map { _ in defaultGameState }
+            .startWith(nil)
         
         // MARK: Render
         // perform a render of the entire new game state
