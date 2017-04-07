@@ -70,7 +70,7 @@ class ViewController: UIViewController {
         
         let defaultScoreboard = Scoreboard()
         
-        // player 1 is always first
+        // player 1 is always first for a new game set
         self.player1ActiveIndicator.alpha = 1
         self.player2ActiveIndicator.alpha = 0
         
