@@ -90,8 +90,7 @@ class ViewController: UIViewController {
                 [cell.uiElement.rx.tap
                     .map {
                         return (uiElement: cell.uiElement, position: cell.position)
-                    }
-                    .take(1)]
+                    }]
         })
         
         // MARK: Game State
