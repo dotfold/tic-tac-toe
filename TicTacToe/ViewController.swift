@@ -143,7 +143,7 @@ class ViewController: UIViewController {
             .share()
         
         // MARK: Tied board
-        // this could also be the onComplete of the render? because at that point, all tap observables have completed
+        // a winning move could be played on the last cell, so if there is a winner before this produces a value, we stop there
         let tie$ = gameState$
             .flatMap { Observable.of(checkTiedBoard(board: $0.board)) }
             .share()
