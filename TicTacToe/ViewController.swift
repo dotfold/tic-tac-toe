@@ -144,6 +144,37 @@ class ViewController: UIViewController {
             .takeUntil(Observable.combineLatest(winner$, tie$))
             .subscribe()
         
+        
+        
+//        .scan(defaultScoreboard, accumulator: { (prevScoreboard: Scoreboard, players: (winPlayer: Player, tiePlayer: Player?)) -> Scoreboard in
+        // MARK: Scoreboard
+        let scoreBoard$ = Observable.merge(winner$, tie$)
+            .filter { $0.type != PlayerType.none }
+            .scan(defaultScoreboard, accumulator: { (prevScoreboard: Scoreboard, player: Player) -> Scoreboard in
+                print("scoreboard! \(player)")
+                var updatedScoreboard = Scoreboard()
+                updatedScoreboard.update(with: player)
+                return updatedScoreboard
+            })
+            .startWith(defaultScoreboard)
+            // tie$ will produce nil if it's not a tie. we want to ignore this.
+        
+        _ = scoreBoard$
+            .map { String($0.xWinCount) }
+            .bindTo(self.player1Scorecard.rx.text)
+            .addDisposableTo(self.disposeBag)
+        
+        _ = scoreBoard$
+            .map { String($0.oWinCount) }
+            .bindTo(self.player2Scorecard.rx.text)
+            .addDisposableTo(self.disposeBag)
+        
+        _ = scoreBoard$
+            .map { String($0.tiedGameCount) }
+            .bindTo(self.tiedGameScorecard.rx.text)
+            .addDisposableTo(self.disposeBag)
+        
+        // MARK:
         let gameEnd$ = Observable.combineLatest(winner$, tie$)
             .subscribe(
                 onNext: { x in
