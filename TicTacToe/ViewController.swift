@@ -31,6 +31,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var tiedGameScorecard: UILabel!
     @IBOutlet weak var player2Scorecard: UILabel!
     
+    @IBOutlet weak var gameEndMessage: UILabel!
     
     private let disposeBag = DisposeBag()
     private var cells: Array<Cell> = []
@@ -174,11 +175,40 @@ class ViewController: UIViewController {
         
         // MARK:
         let gameEnd$ = Observable.merge(winner$, tie$)
-            .subscribe(
-                onNext: { x in
-                    print("game over!")
+            .filter{ $0.type != PlayerType.none }
+            .take(1)
+        
+//            .subscribe(
+//                onNext: { x in
+//                    print("game over! \(x)")
+//            }
+//        )
+        
+        // Start a new game countdown timer
+        // skip 1 second, then take 3
+        // but only when the game has ended, so use a concat.
+        // this is mapped to an Int with value 0 because the resulting sequence from concat
+        // must have two sequences that yeild the same type.
+        let gameEndedCountdown$ = gameEnd$.map { _ in 0 }.concat(
+            Observable<Int>.interval(1, scheduler: MainScheduler.instance)
+                .map({ time in 3 - time })
+                .take(3 + 1)
+//                .skip(1)
+//                .take(3)
+            )
+            // and skip that first 0
+            .skip(1)
+        
+        _ = Observable.combineLatest(gameEnd$, gameEndedCountdown$)
+            .map { (winner, remaining) -> String in
+                let message = winner.type == PlayerType.tied
+                    ? "Game tied... starting new game in \(remaining)"
+                    : "\(winner.description) wins! Starting new game in \(remaining)"
+                
+                return message
             }
-        )
+            .bindTo(self.gameEndMessage.rx.text)
+        
         
         // MARK: Render
         // perform a render of the entire new game state
