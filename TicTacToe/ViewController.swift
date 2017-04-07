@@ -27,6 +27,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var player1ActiveIndicator: UIImageView!
     @IBOutlet weak var player2ActiveIndicator: UIImageView!
     
+    @IBOutlet weak var player1Scorecard: UILabel!
+    @IBOutlet weak var tiedGameScorecard: UILabel!
+    @IBOutlet weak var player2Scorecard: UILabel!
+    
     
     private let disposeBag = DisposeBag()
     private var cells: Array<Cell> = []
@@ -55,6 +59,8 @@ class ViewController: UIViewController {
                 [self.cells[6], self.cells[7], self.cells[8]]
             ]
         )
+        
+        let defaultScoreboard = Scoreboard()
         
         // player 1 is always first
         self.player1ActiveIndicator.alpha = 1
@@ -158,7 +164,7 @@ class ViewController: UIViewController {
             })
             .subscribe(
                 onNext: { cell in
-                    print("render done")
+//                    print("render done")
                 }
             )
         
