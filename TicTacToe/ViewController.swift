@@ -24,6 +24,10 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var reset: UIButton!
     
+    @IBOutlet weak var player1ActiveIndicator: UIImageView!
+    @IBOutlet weak var player2ActiveIndicator: UIImageView!
+    
+    
     private let disposeBag = DisposeBag()
     private var cells: Array<Cell> = []
     
@@ -50,6 +54,10 @@ class ViewController: UIViewController {
                 [self.cells[6], self.cells[7], self.cells[8]]
             ]
         )
+        
+        // player 1 is always first
+        self.player1ActiveIndicator.alpha = 1
+        self.player2ActiveIndicator.alpha = 0
         
         let reset$ = reset.rx.tap
             .debug("reset tap")
@@ -87,7 +95,7 @@ class ViewController: UIViewController {
                     return row
                 })
                 
-                let completed = findWinner(board: updatedPositions).type != PlayerType.none
+                let completed = findWinner(board: updatedPositions).type != PlayerType.none // || checkTiedBoard(board: updatedPositions)
                 return GameState(activePlayer: nextPlayer, board: updatedPositions, complete: completed)
             })
             .startWith(defaultGameState)
@@ -102,9 +110,26 @@ class ViewController: UIViewController {
             .flatMap { Observable.of(checkTiedBoard(board: $0.board)) }
 
         
+        // player activity indicators
+        let playerOneActive$ = gameState$
+            .map { $0.activePlayer }
+            .filter { $0.type == PlayerType.x }
+            .do(onNext: { [unowned self] (Player) in
+                self.player1ActiveIndicator.alpha = 1
+                self.player2ActiveIndicator.alpha = 0
+            })
         
-//        gameState$ map activePlayer to label field above the board
+        let playerTwoActive$ = gameState$
+            .map { $0.activePlayer }
+            .filter { $0.type == PlayerType.o }
+            .do(onNext: { [unowned self] (Player) in
+                self.player1ActiveIndicator.alpha = 0
+                self.player2ActiveIndicator.alpha = 1
+            })
         
+        _ = Observable.combineLatest(playerOneActive$, playerTwoActive$)
+            .takeUntil(Observable.combineLatest(winner$, tie$))
+            .subscribe()
         
         
         // perform a render of the entire new game state
@@ -123,7 +148,7 @@ class ViewController: UIViewController {
                 }
             )
         
-        let r = Observable.combineLatest(winner$, tie$)
+        let gameEnd$ = Observable.combineLatest(winner$, tie$)
             .subscribe(
                 onNext: { x in
                     print("game over!")

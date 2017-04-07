@@ -21,6 +21,7 @@
 		79938F951E920666001C8F54 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79938F941E920666001C8F54 /* Player.swift */; };
 		79938F9B1E922923001C8F54 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79938F991E922923001C8F54 /* RxCocoa.framework */; };
 		79938F9C1E922923001C8F54 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79938F9A1E922923001C8F54 /* RxSwift.framework */; };
+		79F4FF5C1E97518300707EF2 /* light-blue-circle-md.png in Resources */ = {isa = PBXBuildFile; fileRef = 79F4FF5B1E97518300707EF2 /* light-blue-circle-md.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 		79938F941E920666001C8F54 /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		79938F991E922923001C8F54 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		79938F9A1E922923001C8F54 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
+		79F4FF5B1E97518300707EF2 /* light-blue-circle-md.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "light-blue-circle-md.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 				79938F8A1E91E2F7001C8F54 /* Board.png */,
 				79938F8B1E91E2F7001C8F54 /* O_icon.png */,
 				79938F8C1E91E2F7001C8F54 /* X_icon.png */,
+				79F4FF5B1E97518300707EF2 /* light-blue-circle-md.png */,
 				79938F6A1E91E1C8001C8F54 /* AppDelegate.swift */,
 				79938F6C1E91E1C8001C8F54 /* ViewController.swift */,
 				79938F6E1E91E1C8001C8F54 /* Main.storyboard */,
@@ -214,6 +217,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79F4FF5C1E97518300707EF2 /* light-blue-circle-md.png in Resources */,
 				79938F8D1E91E2F7001C8F54 /* Board.png in Resources */,
 				79938F751E91E1C8001C8F54 /* LaunchScreen.storyboard in Resources */,
 				79938F8E1E91E2F7001C8F54 /* O_icon.png in Resources */,
@@ -473,6 +477,7 @@
 				79938F861E91E1C8001C8F54 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		79938F871E91E1C8001C8F54 /* Build configuration list for PBXNativeTarget "TicTacToeTests" */ = {
 			isa = XCConfigurationList;
@@ -481,6 +486,7 @@
 				79938F891E91E1C8001C8F54 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
