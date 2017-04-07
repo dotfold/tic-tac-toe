@@ -108,17 +108,20 @@ class ViewController: UIViewController {
                 return GameState(activePlayer: nextPlayer, board: updatedPositions, complete: completed)
             })
             .startWith(defaultGameState)
+            .share()
         
         // MARK: Winner
         let winner$ = gameState$
             .flatMap { Observable.of(findWinner(board: $0.board)) }
             .filter { $0.type != PlayerType.none }
             .debug("found a winner!")
+            .share()
         
         // MARK: Tied board
         // this could also be the onComplete of the render? because at that point, all tap observables have completed
         let tie$ = gameState$
             .flatMap { Observable.of(checkTiedBoard(board: $0.board)) }
+            .share()
 
         
         // MARK: Player Activity Indicators
@@ -144,20 +147,15 @@ class ViewController: UIViewController {
             .takeUntil(Observable.combineLatest(winner$, tie$))
             .subscribe()
         
-        
-        
-//        .scan(defaultScoreboard, accumulator: { (prevScoreboard: Scoreboard, players: (winPlayer: Player, tiePlayer: Player?)) -> Scoreboard in
         // MARK: Scoreboard
         let scoreBoard$ = Observable.merge(winner$, tie$)
             .filter { $0.type != PlayerType.none }
             .scan(defaultScoreboard, accumulator: { (prevScoreboard: Scoreboard, player: Player) -> Scoreboard in
-                print("scoreboard! \(player)")
                 var updatedScoreboard = Scoreboard()
                 updatedScoreboard.update(with: player)
                 return updatedScoreboard
             })
             .startWith(defaultScoreboard)
-            // tie$ will produce nil if it's not a tie. we want to ignore this.
         
         _ = scoreBoard$
             .map { String($0.xWinCount) }
@@ -175,7 +173,7 @@ class ViewController: UIViewController {
             .addDisposableTo(self.disposeBag)
         
         // MARK:
-        let gameEnd$ = Observable.combineLatest(winner$, tie$)
+        let gameEnd$ = Observable.merge(winner$, tie$)
             .subscribe(
                 onNext: { x in
                     print("game over!")
