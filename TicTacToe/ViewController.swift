@@ -42,12 +42,18 @@ class ViewController: UIViewController {
         
         // MARK: Setup
         self.cells = [
+            
+            // top row
             Cell(uiElement: pieceTL, position: Position(x: 0, y: 0)),
             Cell(uiElement: pieceTC, position: Position(x: 1, y: 0)),
             Cell(uiElement: pieceTR, position: Position(x: 2, y: 0)),
+            
+            // middle row
             Cell(uiElement: pieceCL, position: Position(x: 0, y: 1)),
             Cell(uiElement: pieceCC, position: Position(x: 1, y: 1)),
             Cell(uiElement: pieceCR, position: Position(x: 2, y: 1)),
+            
+            // bottom row
             Cell(uiElement: pieceBL, position: Position(x: 0, y: 2)),
             Cell(uiElement: pieceBC, position: Position(x: 1, y: 2)),
             Cell(uiElement: pieceBR, position: Position(x: 2, y: 2))

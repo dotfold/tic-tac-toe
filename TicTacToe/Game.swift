@@ -37,7 +37,6 @@ struct Scoreboard {
     var tiedGameCount = 0
     
     mutating func update (with player: Player) {
-        
         switch player.type {
             case PlayerType.tied:
                 tiedGameCount += 1
