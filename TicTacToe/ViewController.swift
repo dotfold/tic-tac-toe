@@ -224,7 +224,6 @@ class ViewController: UIViewController {
                 
                 return message
             }
-            .bindTo(self.gameEndMessage.rx.text)
         
         // bind the countdown message to the UI
         _ = newGameMessageProducer$.bindTo(self.gameEndMessage.rx.text)
