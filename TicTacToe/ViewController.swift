@@ -241,7 +241,7 @@ class ViewController: UIViewController {
             .subscribe()
         
         // MARK: Scoreboard
-        let scoreBoard$ = Observable.merge(resetScores$)
+        let scoreBoard$ = Observable.merge(resetScores$, playerModeChange$)
             .flatMapLatest({ _ in
                 return Observable.merge(winner$, tie$)
                     .filter { $0.type != PlayerType.none }
