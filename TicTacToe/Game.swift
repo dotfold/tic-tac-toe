@@ -31,17 +31,11 @@ struct GameState {
         self.isAI = isAI
     }
     
-    init (activePlayer: Player, board: [[Cell]], complete: Bool) {
+    init (activePlayer: Player, board: [[Cell]], complete: Bool, isAI: Bool) {
         self.activePlayer = activePlayer
         self.board = board
         self.complete = complete
-    }
-    
-    init (activePlayer: Player, board: [[Cell]], complete: Bool, result: Player) {
-        self.activePlayer = activePlayer
-        self.board = board
-        self.complete = complete
-        self.winningPlayer = result
+        self.isAI = isAI
     }
 }
 
