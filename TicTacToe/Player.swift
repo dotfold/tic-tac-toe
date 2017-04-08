@@ -15,19 +15,19 @@ enum PlayerType: Int {
     case none
 }
 
-// usage: `let player1 = Player(PlayerType.x)`
+// usage: `let player1 = Player(type: PlayerType.x)`
 struct Player {
     var type: PlayerType
     var imageFile: String
     var description: String
     
-    init() {
+    init () {
         self.type = PlayerType.none
         self.imageFile = ""
         self.description = ""
     }
     
-    init(type: PlayerType) {
+    init (type: PlayerType) {
         self.type = type
         self.imageFile = type == PlayerType.x ? "X_icon.png" : "O_icon.png"
         self.description = "Player \(String(describing: type).uppercased())"
