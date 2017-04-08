@@ -36,6 +36,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var gameEndMessage: UILabel!
     @IBOutlet weak var newGameButton: UIButton!
     
+    @IBOutlet weak var playerModeSwitch: UISwitch!
     
     private let disposeBag = DisposeBag()
     private var cells: Array<Cell> = []
@@ -89,6 +90,9 @@ class ViewController: UIViewController {
         
         self.newGameButton.alpha = 0
         
+        // On = single player
+        self.playerModeSwitch.setOn(true, animated: true)
+        
         
         // handle reset merges by flatMap
         // MARK: New Game
@@ -103,6 +107,15 @@ class ViewController: UIViewController {
         let resetScores$ = resetScoresButton.rx.tap
             .map { _ in defaultGameState }
             .startWith(defaultGameState)
+        
+        let playerModeChange$ = playerModeSwitch.rx.value
+            .debug("player mode changed")
+            .do(onNext: { (state) in
+                print("mode change \(state)")
+            })
+            .map { value in
+                value ? defaultGameState : defaultAIGameState
+            }
         
         // MARK: Cell clickstreams
         let clicks$: Array<Observable<(uiElement: UIButton, position: Position)>> = self.cells.reduce([], { result, cell in
