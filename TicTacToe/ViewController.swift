@@ -76,6 +76,8 @@ class ViewController: UIViewController {
         self.player1ActiveIndicator.alpha = 1
         self.player2ActiveIndicator.alpha = 0
         
+        self.newGameButton.alpha = 0
+        
         
         // handle reset merges by flatMap
         // MARK: New Game
@@ -147,17 +149,13 @@ class ViewController: UIViewController {
         let winner$ = gameState$
             .filter { $0.complete }
             .flatMap { Observable.of(findWinner(board: $0.board)) }
-            .debug("winner")
             .filter { $0.type != PlayerType.none && $0.type != PlayerType.tied }
             .share()
         
         // MARK: Tied board
-        // a winning move could be played on the last cell, so if there is a winner before this produces a value, we stop there
         let tie$ = gameState$
-//            .takeUntil(winner$)
             .filter { $0.complete }
             .flatMap { Observable.of(checkTiedBoard(board: $0.board)) }
-            .debug("tied")
             .filter { $0.type == PlayerType.tied }
             .share()
         
@@ -185,7 +183,6 @@ class ViewController: UIViewController {
             .subscribe()
         
         // MARK: Scoreboard
-//        let scoreBoard$ = winner$.amb(tie$)
         let scoreBoard$ = Observable.merge(winner$, tie$)
             .filter { $0.type != PlayerType.none }
             .scan(defaultScoreboard, accumulator: { (prevScoreboard: Scoreboard, player: Player) -> Scoreboard in
@@ -212,9 +209,8 @@ class ViewController: UIViewController {
         
         // MARK: Game end display
         let gameEnd$ = Observable.merge(winner$, tie$)
-//        _ = winner$.amb(tie$)
+        _ = gameEnd$
             .filter{ $0.type != PlayerType.none }
-//            .take(1)
             .map { (winner) -> String in
                 let message = winner.type == PlayerType.tied
                     ? "Game tied!"
@@ -225,7 +221,22 @@ class ViewController: UIViewController {
             // bind the countdown message to the UI
             .bindTo(self.gameEndMessage.rx.text).addDisposableTo(self.disposeBag)
         
-//        gameEnd$.
+        _ = gameEnd$
+            .filter{ $0.type != PlayerType.none }
+            .map { _ in 1 }
+            .bindTo(self.newGameButton.rx.alpha)
+        
+        // fresh game state, clear the message
+        _ = gameState$
+            .filter{ !$0.complete }
+            .map { _ in return "" }
+            // bind the countdown message to the UI
+            .bindTo(self.gameEndMessage.rx.text).addDisposableTo(self.disposeBag)
+        
+        _ = gameState$
+            .filter{ !$0.complete }
+            .map { _ in 0 }
+            .bindTo(self.newGameButton.rx.alpha)
         
         // MARK: Render
         // perform a render of the entire new game state
