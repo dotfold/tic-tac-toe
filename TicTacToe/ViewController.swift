@@ -93,12 +93,10 @@ class ViewController: UIViewController {
         // handle reset merges by flatMap
         // MARK: New Game
         let reset$ = reset.rx.tap
-            .debug("reset tap")
             .map { _ in defaultGameState }
             .startWith(defaultGameState)
         
         let newGame$ = newGameButton.rx.tap
-            .debug("new game tap")
             .map { _ in defaultGameState }
             .startWith(defaultGameState)
         
