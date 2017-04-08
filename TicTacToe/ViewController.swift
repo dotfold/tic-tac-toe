@@ -133,7 +133,8 @@ class ViewController: UIViewController {
                         })
                         
                         // finally, check to see if this move resulted in a game end state
-                        let maybeWinner = findWinner(board: updatedPositions).type != PlayerType.none
+                        let processWinner = findWinner(board: updatedPositions)
+                        let maybeWinner = processWinner.type != PlayerType.none && processWinner.type != PlayerType.tied
                         let maybeTie = !maybeWinner && checkTiedBoard(board: updatedPositions).type == PlayerType.tied
                         let completed = maybeWinner || maybeTie
                         return GameState(activePlayer: nextPlayer, board: updatedPositions, complete: completed)
@@ -144,15 +145,19 @@ class ViewController: UIViewController {
         
         // MARK: Winner
         let winner$ = gameState$
+            .filter { $0.complete }
             .flatMap { Observable.of(findWinner(board: $0.board)) }
+            .debug("winner")
             .filter { $0.type != PlayerType.none && $0.type != PlayerType.tied }
             .share()
         
         // MARK: Tied board
         // a winning move could be played on the last cell, so if there is a winner before this produces a value, we stop there
         let tie$ = gameState$
-            .takeUntil(winner$)
+//            .takeUntil(winner$)
+            .filter { $0.complete }
             .flatMap { Observable.of(checkTiedBoard(board: $0.board)) }
+            .debug("tied")
             .filter { $0.type == PlayerType.tied }
             .share()
         
@@ -176,17 +181,17 @@ class ViewController: UIViewController {
                 self.player2ActiveIndicator.alpha = 1
             })
         
-        _ = Observable.combineLatest(playerOneActive$, playerTwoActive$)
-            .takeUntil(Observable.combineLatest(winner$, tie$))
+         _ = Observable.combineLatest(playerOneActive$, playerTwoActive$)
             .subscribe()
         
         // MARK: Scoreboard
+//        let scoreBoard$ = winner$.amb(tie$)
         let scoreBoard$ = Observable.merge(winner$, tie$)
             .filter { $0.type != PlayerType.none }
             .scan(defaultScoreboard, accumulator: { (prevScoreboard: Scoreboard, player: Player) -> Scoreboard in
-                var updatedScoreboard = Scoreboard()
-                updatedScoreboard.update(with: player)
-                return updatedScoreboard
+                var newScores = Scoreboard()
+                newScores = newScores.update(from: prevScoreboard, player: player)
+                return newScores
             })
             .startWith(defaultScoreboard)
         
@@ -207,8 +212,9 @@ class ViewController: UIViewController {
         
         // MARK: Game end display
         let gameEnd$ = Observable.merge(winner$, tie$)
+//        _ = winner$.amb(tie$)
             .filter{ $0.type != PlayerType.none }
-            .take(1)
+//            .take(1)
             .map { (winner) -> String in
                 let message = winner.type == PlayerType.tied
                     ? "Game tied!"

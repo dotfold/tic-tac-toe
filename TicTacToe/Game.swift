@@ -13,6 +13,7 @@ struct GameState {
     var board: [[Cell]] = [[], [], []]
     var activePlayer: Player
     var complete: Bool = false
+    var winningPlayer: Player = Player(type: PlayerType.none)
     
     init (activePlayer: Player) {
         self.activePlayer = activePlayer
@@ -28,6 +29,13 @@ struct GameState {
         self.board = board
         self.complete = complete
     }
+    
+    init (activePlayer: Player, board: [[Cell]], complete: Bool, result: Player) {
+        self.activePlayer = activePlayer
+        self.board = board
+        self.complete = complete
+        self.winningPlayer = result
+    }
 }
 
 struct Scoreboard {
@@ -36,19 +44,42 @@ struct Scoreboard {
     var oWinCount = 0
     var tiedGameCount = 0
     
-    mutating func update (with player: Player) {
+    func update (from scores: Scoreboard, player: Player) -> Scoreboard {
         switch player.type {
             case PlayerType.tied:
-                tiedGameCount += 1
-                break
+                var t = scores.tiedGameCount
+                t += 1
+                return Scoreboard(
+                    xWinCount: scores.xWinCount,
+                    oWinCount: scores.oWinCount,
+                    tiedGameCount: t
+                )
             case PlayerType.x:
-                xWinCount += 1
-                break
+                var x = scores.xWinCount
+                x += 1
+                return Scoreboard(
+                    xWinCount: x,
+                    oWinCount: scores.oWinCount,
+                    tiedGameCount: scores.tiedGameCount
+                )
             case PlayerType.o:
-                oWinCount += 1
-                break
+                var o = scores.oWinCount
+                o += 1
+                return Scoreboard(
+                    xWinCount: scores.xWinCount,
+                    oWinCount: o,
+                    tiedGameCount: scores.tiedGameCount
+                )
             default:
                 print("no update to be made")
         }
+        
+        return Scoreboard()
+    }
+    
+    init (xWinCount: Int = 0, oWinCount: Int = 0, tiedGameCount: Int = 0) {
+        self.xWinCount = xWinCount
+        self.oWinCount = oWinCount
+        self.tiedGameCount = tiedGameCount
     }
 }
