@@ -90,7 +90,7 @@ class ViewController: UIViewController {
         
         self.newGameButton.alpha = 0
         
-        // On = single player
+        // On = two human players
         self.playerModeSwitch.setOn(true, animated: true)
         
         // MARK: New Game
@@ -149,9 +149,9 @@ class ViewController: UIViewController {
                             return completed
                         }
                         
-                        func updatePositions(for move: (uiElement: UIButton, position: Position), player: Player) -> [[Cell]] {
+                        func updatePositions(from board: [[Cell]], move: (uiElement: UIButton, position: Position), player: Player) -> [[Cell]] {
                             // loop the rows to mark the newly clicked cell with the appropriate player
-                            return prevState.board.enumerated().map({ (index, row) -> [Cell] in
+                            return board.enumerated().map({ (index, row) -> [Cell] in
                                 if index == move.position.y {
                                     let inner = row.enumerated().map({ (indexInRow, cell) -> Cell in
                                         if indexInRow == move.position.x {
@@ -175,7 +175,7 @@ class ViewController: UIViewController {
                         let justMovedPlayer = prevState.activePlayer
                         var nextPlayer = prevState.activePlayer.type == PlayerType.x ? Player(type: PlayerType.o) : Player(type: PlayerType.x)
                         
-                        var updatedPositions = updatePositions(for: move, player: justMovedPlayer)
+                        var updatedPositions = updatePositions(from: prevState.board, move: move, player: justMovedPlayer)
                         
                         
                         // if this is an AI game...
@@ -186,7 +186,7 @@ class ViewController: UIViewController {
                             let aiMove = determineBestMove(board: updatedPositions)
                             
                             // update the positions again with our new cell
-                            updatedPositions = updatePositions(for: aiMove, player: nextPlayer)
+                            updatedPositions = updatePositions(from: updatedPositions, move: aiMove, player: nextPlayer)
                             
                             // now set the player back to the justMovedPlayer
                             nextPlayer = justMovedPlayer
