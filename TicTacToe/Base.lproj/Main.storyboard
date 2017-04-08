@@ -137,6 +137,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Play Again"/>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Kr-in-cvW">
+                                <rect key="frame" x="8" y="28" width="94" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Reset Scores"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -157,6 +162,7 @@
                         <outlet property="player2ActiveIndicator" destination="yJG-WT-6vw" id="eFb-6b-t4O"/>
                         <outlet property="player2Scorecard" destination="dwU-xf-J8g" id="rXj-g8-odY"/>
                         <outlet property="reset" destination="LB8-rc-xRg" id="a3W-5V-fap"/>
+                        <outlet property="resetScoresButton" destination="9Kr-in-cvW" id="XXC-bx-SbB"/>
                         <outlet property="tiedGameScorecard" destination="v5W-tF-xvl" id="5kF-jk-5LY"/>
                     </connections>
                 </viewController>

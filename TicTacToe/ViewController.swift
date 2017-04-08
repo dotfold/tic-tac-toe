@@ -24,6 +24,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var pieceBR: UIButton!
     
     @IBOutlet weak var reset: UIButton!
+    @IBOutlet weak var resetScoresButton: UIButton!
     
     @IBOutlet weak var player1ActiveIndicator: UIImageView!
     @IBOutlet weak var player2ActiveIndicator: UIImageView!
@@ -91,6 +92,10 @@ class ViewController: UIViewController {
             .map { _ in defaultGameState }
             .startWith(defaultGameState)
         
+        let resetScores$ = resetScoresButton.rx.tap
+            .map { _ in defaultGameState }
+            .startWith(defaultGameState)
+        
         // MARK: Cell clickstreams
         let clicks$: Array<Observable<(uiElement: UIButton, position: Position)>> = self.cells.reduce([], { result, cell in
             // Map each cell to a Tuple
@@ -105,7 +110,7 @@ class ViewController: UIViewController {
         // MARK: Game State
         // game state - this is the state for each single game
         // TODO: merge gameEnded$ as another reset case
-        let gameState$ = Observable.merge(reset$, newGame$)
+        let gameState$ = Observable.merge(reset$, newGame$, resetScores$)
             .flatMapLatest({ _ in
                 return Observable.merge(clicks$)
                     .scan(defaultGameState, accumulator: { (prevState: GameState, move: (uiElement: UIButton, position: Position)) -> GameState in
@@ -183,14 +188,17 @@ class ViewController: UIViewController {
             .subscribe()
         
         // MARK: Scoreboard
-        let scoreBoard$ = Observable.merge(winner$, tie$)
-            .filter { $0.type != PlayerType.none }
-            .scan(defaultScoreboard, accumulator: { (prevScoreboard: Scoreboard, player: Player) -> Scoreboard in
-                var newScores = Scoreboard()
-                newScores = newScores.update(from: prevScoreboard, player: player)
-                return newScores
+        let scoreBoard$ = Observable.merge(resetScores$)
+            .flatMapLatest({ _ in
+                return Observable.merge(winner$, tie$)
+                    .filter { $0.type != PlayerType.none }
+                    .scan(defaultScoreboard, accumulator: { (prevScoreboard: Scoreboard, player: Player) -> Scoreboard in
+                        var newScores = Scoreboard()
+                        newScores = newScores.update(from: prevScoreboard, player: player)
+                        return newScores
+                    })
+                    .startWith(defaultScoreboard)
             })
-            .startWith(defaultScoreboard)
         
         _ = scoreBoard$
             .map { String($0.xWinCount) }
