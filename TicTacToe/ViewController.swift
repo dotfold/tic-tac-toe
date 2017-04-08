@@ -146,12 +146,13 @@ class ViewController: UIViewController {
                         // don't mark any new positions if the game has completed
                         if prevState.complete { return prevState }
                         
+                        
                         let justMovedPlayer = prevState.activePlayer
-                        let nextPlayer = prevState.activePlayer.type == PlayerType.x ? Player(type: PlayerType.o) : Player(type: PlayerType.x)
+                        var nextPlayer = prevState.activePlayer.type == PlayerType.x ? Player(type: PlayerType.o) : Player(type: PlayerType.x)
                         let markedPosition = move.position
                         
                         // loop the rows to mark the newly clicked cell with the appropriate player
-                        let updatedPositions = prevState.board.enumerated().map({ (index, row) -> [Cell] in
+                        var updatedPositions = prevState.board.enumerated().map({ (index, row) -> [Cell] in
                             if index == markedPosition.y {
                                 let inner = row.enumerated().map({ (indexInRow, cell) -> Cell in
                                     if indexInRow == markedPosition.x {
@@ -163,6 +164,33 @@ class ViewController: UIViewController {
                             }
                             return row
                         })
+                        
+                        // if this is an AI game...
+                        // we have the move from the
+                        if prevState.isAI {
+                           
+                            // find the best cell to mark
+                            let aiPosition = Position(x: 2, y: 2)
+                            let aiElement = self.cells[8].uiElement
+                            
+                            // update the positions again with our new cell
+                            updatedPositions = updatedPositions.enumerated().map({ (index, row) -> [Cell] in
+                                if index == aiPosition.y {
+                                    let inner = row.enumerated().map({ (indexInRow, cell) -> Cell in
+                                        if indexInRow == aiPosition.x {
+                                            return Cell(owner: nextPlayer, uiElement: aiElement, position: aiPosition)
+                                        }
+                                        return cell
+                                    })
+                                    return inner
+                                }
+                                return row
+                            })
+                            
+                            // now set the player back to the justMovedPlayer
+                            nextPlayer = justMovedPlayer
+                        }
+                        
                         
                         // finally, check to see if this move resulted in a game end state
                         let processWinner = findWinner(board: updatedPositions)
