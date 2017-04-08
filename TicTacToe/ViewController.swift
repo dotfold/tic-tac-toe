@@ -93,8 +93,6 @@ class ViewController: UIViewController {
         // On = single player
         self.playerModeSwitch.setOn(true, animated: true)
         
-        
-        // handle reset merges by flatMap
         // MARK: New Game
         let reset$ = reset.rx.tap
             .map { _ in defaultGameState }
@@ -110,9 +108,6 @@ class ViewController: UIViewController {
         
         let playerModeChange$ = playerModeSwitch.rx.value
             .debug("player mode changed")
-            .do(onNext: { (state) in
-                print("mode change \(state)")
-            })
             .map { value in
                 value ? defaultGameState : defaultAIGameState
             }
@@ -129,7 +124,6 @@ class ViewController: UIViewController {
         // MARK: Cell clickstreams
         let clicks$: Array<Observable<(uiElement: UIButton, position: Position)>> = self.cells.reduce([], { result, cell in
             // Map each cell to a Tuple
-            // For each cell, only take one tap event, these will be reset for each new game
             return result +
                 [cell.uiElement.rx.tap
                     .map {
@@ -161,10 +155,9 @@ class ViewController: UIViewController {
                         // don't mark any new positions if the game has completed
                         if prevState.complete { return prevState }
                         
-                        
+                        // determine which cell to mark in the updated board
                         let justMovedPlayer = prevState.activePlayer
                         var nextPlayer = prevState.activePlayer.type == PlayerType.x ? Player(type: PlayerType.o) : Player(type: PlayerType.x)
-                        let markedPosition = move.position
                         
                         // loop the rows to mark the newly clicked cell with the appropriate player
                         var updatedPositions = prevState.board.enumerated().map({ (index, row) -> [Cell] in
@@ -288,7 +281,7 @@ class ViewController: UIViewController {
                 
                 return message
             }
-            // bind the countdown message to the UI
+            // bind the message to the UI
             .bindTo(self.gameEndMessage.rx.text).addDisposableTo(self.disposeBag)
         
         _ = gameEnd$
@@ -296,7 +289,7 @@ class ViewController: UIViewController {
             .map { _ in 1 }
             .bindTo(self.newGameButton.rx.alpha)
         
-        // fresh game state, clear the message
+        // fresh game state, clear the message and hide the button
         _ = gameState$
             .filter{ !$0.complete }
             .map { _ in return "" }
