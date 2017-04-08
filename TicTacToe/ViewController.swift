@@ -107,7 +107,6 @@ class ViewController: UIViewController {
             .startWith(defaultGameState)
         
         let playerModeChange$ = playerModeSwitch.rx.value
-            .debug("player mode changed")
             .map { value in
                 value ? defaultGameState : defaultAIGameState
             }
