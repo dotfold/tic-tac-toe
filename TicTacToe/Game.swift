@@ -9,12 +9,13 @@
 import Foundation
 
 struct GameState {
+    
     let nilPlayer: Player = Player()
     var board: [[Cell]] = [[], [], []]
     var activePlayer: Player
     var complete: Bool = false
-    var winningPlayer: Player = Player(type: PlayerType.none)
     var isAI: Bool = false
+    var isLocked: Bool = false
     
     init (activePlayer: Player) {
         self.activePlayer = activePlayer
@@ -25,17 +26,28 @@ struct GameState {
         self.board = board
     }
     
+    // AI mode default
     init (activePlayer: Player, board: [[Cell]], isAI: Bool) {
         self.activePlayer = activePlayer
         self.board = board
         self.isAI = isAI
     }
     
+    // AI mode & completed
     init (activePlayer: Player, board: [[Cell]], complete: Bool, isAI: Bool) {
         self.activePlayer = activePlayer
         self.board = board
         self.complete = complete
         self.isAI = isAI
+    }
+    
+    // lock the board so no further clicks will register
+    init (activePlayer: Player, board: [[Cell]], complete: Bool, isAI: Bool, isLocked: Bool) {
+        self.activePlayer = activePlayer
+        self.board = board
+        self.complete = complete
+        self.isAI = isAI
+        self.isLocked = isLocked
     }
 }
 

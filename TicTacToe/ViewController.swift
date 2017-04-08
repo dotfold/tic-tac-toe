@@ -167,8 +167,16 @@ class ViewController: UIViewController {
                         // if the cell is already filled, don't build a new gamestate
                         if prevState.board[move.position.y][move.position.x].owner != nil { return prevState }
                         
-                        // don't mark any new positions if the game has completed
-                        if prevState.complete { return prevState }
+                        // don't mark any new positions if the game has completed and return a new locked board
+                        if prevState.complete {
+                            return GameState(
+                                activePlayer: prevState.activePlayer,
+                                board: prevState.board,
+                                complete: prevState.complete,
+                                isAI: prevState.isAI,
+                                isLocked: true
+                            )
+                        }
                         
                         // determine which cell to mark in the updated board
                         let justMovedPlayer = prevState.activePlayer
@@ -200,14 +208,14 @@ class ViewController: UIViewController {
         
         // MARK: Winner
         let winner$ = gameState$
-            .filter { $0.complete }
+            .filter { !$0.isLocked }
             .flatMap { Observable.of(findWinner(board: $0.board)) }
             .filter { $0.type != PlayerType.none && $0.type != PlayerType.tied }
             .share()
         
         // MARK: Tied board
         let tie$ = gameState$
-            .filter { $0.complete }
+            .filter { !$0.isLocked }
             .flatMap { Observable.of(checkTiedBoard(board: $0.board)) }
             .filter { $0.type == PlayerType.tied }
             .share()
