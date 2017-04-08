@@ -130,11 +130,15 @@ class ViewController: UIViewController {
         
         // MARK: Game State
         // game state - this is the state for each single game
-        // TODO: merge gameEnded$ as another reset case
-        let gameState$ = Observable.merge(reset$, newGame$, resetScores$)
-            .flatMapLatest({ _ in
+
+        // merge all signals that should produce a new (default) game state
+        let gameState$ = Observable.merge(reset$, newGame$, resetScores$, playerModeChange$)
+            // start with the default state that the observable produced
+            .flatMapLatest({ newDefaultState in
                 return Observable.merge(clicks$)
-                    .scan(defaultGameState, accumulator: { (prevState: GameState, move: (uiElement: UIButton, position: Position)) -> GameState in
+                    .scan(newDefaultState, accumulator: { (prevState: GameState, move: (uiElement: UIButton, position: Position)) -> GameState in
+                        
+                        print("scan \(newDefaultState.isAI) \(prevState.isAI)")
                         
                         // if the cell is already filled, don't build a new gamestate
                         if prevState.board[move.position.y][move.position.x].owner != nil { return prevState }
