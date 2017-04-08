@@ -320,7 +320,7 @@ class ViewController: UIViewController {
             })
         
         // This is what starts everything, just one call to subscribe()
-        // all the cold observables now become 'hot' and the compositions will take place as expected
+        // all the cold observables now become 'hot' and the compositions will take place as values are produced
         _ = Observable.combineLatest(renderMarkedCells$, renderUnmarkedCells$).subscribe()
 
     }
