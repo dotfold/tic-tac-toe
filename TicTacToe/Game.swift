@@ -14,6 +14,7 @@ struct GameState {
     var activePlayer: Player
     var complete: Bool = false
     var winningPlayer: Player = Player(type: PlayerType.none)
+    var isAI: Bool = false
     
     init (activePlayer: Player) {
         self.activePlayer = activePlayer
@@ -22,6 +23,12 @@ struct GameState {
     init (activePlayer: Player, board: [[Cell]]) {
         self.activePlayer = activePlayer
         self.board = board
+    }
+    
+    init (activePlayer: Player, board: [[Cell]], isAI: Bool) {
+        self.activePlayer = activePlayer
+        self.board = board
+        self.isAI = isAI
     }
     
     init (activePlayer: Player, board: [[Cell]], complete: Bool) {
