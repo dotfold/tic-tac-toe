@@ -149,6 +149,22 @@ class ViewController: UIViewController {
                             return completed
                         }
                         
+                        func updatePositions(for move: (uiElement: UIButton, position: Position), player: Player) -> [[Cell]] {
+                            // loop the rows to mark the newly clicked cell with the appropriate player
+                            return prevState.board.enumerated().map({ (index, row) -> [Cell] in
+                                if index == move.position.y {
+                                    let inner = row.enumerated().map({ (indexInRow, cell) -> Cell in
+                                        if indexInRow == move.position.x {
+                                            return Cell(owner: player, uiElement: move.uiElement, position: move.position)
+                                        }
+                                        return cell
+                                    })
+                                    return inner
+                                }
+                                return row
+                            })
+                        }
+                        
                         // if the cell is already filled, don't build a new gamestate
                         if prevState.board[move.position.y][move.position.x].owner != nil { return prevState }
                         
@@ -159,19 +175,8 @@ class ViewController: UIViewController {
                         let justMovedPlayer = prevState.activePlayer
                         var nextPlayer = prevState.activePlayer.type == PlayerType.x ? Player(type: PlayerType.o) : Player(type: PlayerType.x)
                         
-                        // loop the rows to mark the newly clicked cell with the appropriate player
-                        var updatedPositions = prevState.board.enumerated().map({ (index, row) -> [Cell] in
-                            if index == markedPosition.y {
-                                let inner = row.enumerated().map({ (indexInRow, cell) -> Cell in
-                                    if indexInRow == markedPosition.x {
-                                        return Cell(owner: justMovedPlayer, uiElement: move.uiElement, position: move.position)
-                                    }
-                                    return cell
-                                })
-                                return inner
-                            }
-                            return row
-                        })
+                        var updatedPositions = updatePositions(for: move, player: justMovedPlayer)
+                        
                         
                         // if this is an AI game...
                         // we have the move from the
@@ -181,18 +186,7 @@ class ViewController: UIViewController {
                             let aiMove = determineBestMove(board: updatedPositions)
                             
                             // update the positions again with our new cell
-                            updatedPositions = updatedPositions.enumerated().map({ (index, row) -> [Cell] in
-                                if index == aiMove.position.y {
-                                    let inner = row.enumerated().map({ (indexInRow, cell) -> Cell in
-                                        if indexInRow == aiMove.position.x {
-                                            return Cell(owner: nextPlayer, uiElement: aiMove.uiElement, position: aiMove.position)
-                                        }
-                                        return cell
-                                    })
-                                    return inner
-                                }
-                                return row
-                            })
+                            updatedPositions = updatePositions(for: aiMove, player: nextPlayer)
                             
                             // now set the player back to the justMovedPlayer
                             nextPlayer = justMovedPlayer
