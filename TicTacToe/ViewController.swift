@@ -138,7 +138,13 @@ class ViewController: UIViewController {
                 return Observable.merge(clicks$)
                     .scan(newDefaultState, accumulator: { (prevState: GameState, move: (uiElement: UIButton, position: Position)) -> GameState in
                         
-                        print("scan \(newDefaultState.isAI) \(prevState.isAI)")
+                        func isGameCompleted (board: [[Cell]]) -> Bool {
+                            let processWinner = findWinner(board: board)
+                            let maybeWinner = processWinner.type != PlayerType.none && processWinner.type != PlayerType.tied
+                            let maybeTie = !maybeWinner && checkTiedBoard(board: board).type == PlayerType.tied
+                            let completed = maybeWinner || maybeTie
+                            return completed
+                        }
                         
                         // if the cell is already filled, don't build a new gamestate
                         if prevState.board[move.position.y][move.position.x].owner != nil { return prevState }
@@ -191,13 +197,8 @@ class ViewController: UIViewController {
                             nextPlayer = justMovedPlayer
                         }
                         
-                        
-                        // finally, check to see if this move resulted in a game end state
-                        let processWinner = findWinner(board: updatedPositions)
-                        let maybeWinner = processWinner.type != PlayerType.none && processWinner.type != PlayerType.tied
-                        let maybeTie = !maybeWinner && checkTiedBoard(board: updatedPositions).type == PlayerType.tied
-                        let completed = maybeWinner || maybeTie
-                        return GameState(activePlayer: nextPlayer, board: updatedPositions, complete: completed)
+                        let completed = isGameCompleted(board: updatedPositions)
+                        return GameState(activePlayer: nextPlayer, board: updatedPositions, complete: completed, isAI: prevState.isAI)
                     })
                     .startWith(defaultGameState)
                     .share()
