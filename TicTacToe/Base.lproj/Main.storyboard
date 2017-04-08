@@ -142,6 +142,17 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Reset Scores"/>
                             </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TEO-Oq-gzE">
+                                <rect key="frame" x="77" y="84" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Single Player Mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aTH-iu-ToD">
+                                <rect key="frame" x="141" y="89" width="157" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -161,6 +172,7 @@
                         <outlet property="player1Scorecard" destination="AkT-oG-rgC" id="XrT-Jk-LCD"/>
                         <outlet property="player2ActiveIndicator" destination="yJG-WT-6vw" id="eFb-6b-t4O"/>
                         <outlet property="player2Scorecard" destination="dwU-xf-J8g" id="rXj-g8-odY"/>
+                        <outlet property="playerModeSwitch" destination="TEO-Oq-gzE" id="Z0D-ti-Cw7"/>
                         <outlet property="reset" destination="LB8-rc-xRg" id="a3W-5V-fap"/>
                         <outlet property="resetScoresButton" destination="9Kr-in-cvW" id="XXC-bx-SbB"/>
                         <outlet property="tiedGameScorecard" destination="v5W-tF-xvl" id="5kF-jk-5LY"/>
