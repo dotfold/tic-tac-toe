@@ -117,6 +117,15 @@ class ViewController: UIViewController {
                 value ? defaultGameState : defaultAIGameState
             }
         
+        // the playerModeChange$ stream dictates which gameMode should be used, but we want to project that game mode
+        // when any of the reset streams project a value
+        // so when any of those streams project a value, we are invoking the selector function with each latest value
+        // and we always return the game state from the playerModeStream$
+        // this ensures that any reset stream that produces a value will result in a fresh game of the mode that is currently selected
+        let allResetStreams$ = Observable.combineLatest(reset$, newGame$, resetScores$, playerModeChange$) { (_, _, _, gameMode) -> GameState in
+            return gameMode
+        }
+        
         // MARK: Cell clickstreams
         let clicks$: Array<Observable<(uiElement: UIButton, position: Position)>> = self.cells.reduce([], { result, cell in
             // Map each cell to a Tuple
@@ -132,7 +141,7 @@ class ViewController: UIViewController {
         // game state - this is the state for each single game
 
         // merge all signals that should produce a new (default) game state
-        let gameState$ = Observable.merge(reset$, newGame$, resetScores$, playerModeChange$)
+        let gameState$ = Observable.merge(allResetStreams$)
             // start with the default state that the observable produced
             .flatMapLatest({ newDefaultState in
                 return Observable.merge(clicks$)
