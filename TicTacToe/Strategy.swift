@@ -31,7 +31,6 @@ func findWinner (board rows: [[Cell]]) -> Player {
             return Player(type: PlayerType.none)
         })
     
-//    print("any same? \(maybeWinner)")
     return maybeWinner!
 }
 
