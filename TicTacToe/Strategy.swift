@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 // search all combinations of winning cells to find if any of them contain all of the same player pieces
 func findWinner (board rows: [[Cell]]) -> Player {
@@ -74,6 +75,49 @@ func checkTiedBoard (board rows: [[Cell]]) -> Player {
         .count == BOARD_CELL_COUNT
     
     return tie ? Player(type: PlayerType.tied) : Player(type: PlayerType.none)
+}
+
+// MARK: AI Strategy
+// The heuristic for determning the best move for the AI is:
+//  - find the first cell that is unplayed
+//    - 1. if played, would the AI win?
+//    - 2. if played by opponent, would they win?
+//    - 3. this cell may be the best move
+//    - 4. when search is exhausted, play the last result from 3.
+func determineBestMove (board rows: [[Cell]]) -> (uiElement: UIButton, position: Position) {
+    
+    // the AI player is PlayerType.o
+    
+    var boardForSimulation = rows
+    var cellToPlay = boardForSimulation[0][0]
+    for row in 0 ... 2 {
+        for col in 0 ... 2 {
+            // is this cell owned?
+            if boardForSimulation[row][col].owner == nil {
+                
+                // if we played this cell, did this move make the AI win?
+                boardForSimulation[row][col].owner = Player(type: PlayerType.o)
+                var simulatedWinner = findWinner(board: boardForSimulation)
+                if simulatedWinner.type == PlayerType.o {
+                    cellToPlay = boardForSimulation[row][col]
+                    return (uiElement: cellToPlay.uiElement, position: cellToPlay.position)
+                }
+                
+                // if the opponent played this cell next, did this move make the opponent win?
+                boardForSimulation[row][col].owner = Player(type: PlayerType.x)
+                simulatedWinner = findWinner(board: boardForSimulation)
+                if simulatedWinner.type == PlayerType.x {
+                    cellToPlay = boardForSimulation[row][col]
+                    return (uiElement: cellToPlay.uiElement, position: cellToPlay.position)
+                }
+                
+                cellToPlay = boardForSimulation[row][col]
+            }
+        }
+    }
+    
+    // search has exhausted, play the last cell that we checked
+    return (uiElement: cellToPlay.uiElement, position: cellToPlay.position)
 }
 
 
