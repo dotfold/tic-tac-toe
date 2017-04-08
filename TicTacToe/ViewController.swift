@@ -173,18 +173,17 @@ class ViewController: UIViewController {
                         
                         // if this is an AI game...
                         // we have the move from the
-                        if prevState.isAI {
+                        if prevState.isAI && !isGameCompleted(board: updatedPositions) {
                            
                             // find the best cell to mark
-                            let aiPosition = Position(x: 2, y: 2)
-                            let aiElement = self.cells[8].uiElement
+                            let aiMove = determineBestMove(board: updatedPositions)
                             
                             // update the positions again with our new cell
                             updatedPositions = updatedPositions.enumerated().map({ (index, row) -> [Cell] in
-                                if index == aiPosition.y {
+                                if index == aiMove.position.y {
                                     let inner = row.enumerated().map({ (indexInRow, cell) -> Cell in
-                                        if indexInRow == aiPosition.x {
-                                            return Cell(owner: nextPlayer, uiElement: aiElement, position: aiPosition)
+                                        if indexInRow == aiMove.position.x {
+                                            return Cell(owner: nextPlayer, uiElement: aiMove.uiElement, position: aiMove.position)
                                         }
                                         return cell
                                     })
